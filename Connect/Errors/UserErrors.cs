@@ -12,5 +12,8 @@ namespace Connect.Errors
 
         public static Error EmailAlreadyExists
             => new("User.EmailAlreadyExists", "A user with the same email already exists.", ErrorType.Conflict);
+
+        public static Error InvalidCredentials
+            => new("User.InvalidCredentials", "Invalid email or password.", ErrorType.Unauthorized);
     }
 }

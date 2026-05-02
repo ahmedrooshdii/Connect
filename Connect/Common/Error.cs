@@ -14,6 +14,7 @@ namespace Connect.Common
         Failure = 0,
         Validation = 1,
         NotFound = 2,
-        Conflict = 3
+        Conflict = 3,
+        Unauthorized = 4
     }
 }
