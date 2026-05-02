@@ -23,5 +23,16 @@ namespace Connect.Controllers
                 return BadRequest(result.Error);
             return Ok(result.Value);
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            var result = await _authService.LoginAsync(request);
+
+            if (result.IsFailure)
+                return Unauthorized(result.Error);
+
+            return Ok(result.Value);
+        }
     }
 }

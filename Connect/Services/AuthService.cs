@@ -19,10 +19,10 @@ namespace Connect.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly Jwt _jwt;
 
-        public AuthService(UserManager<AppUser> userManager, IOptionsMonitor<Jwt> jwt)
+        public AuthService(UserManager<AppUser> userManager, IOptionsSnapshot<Jwt> jwt)
         {
             _userManager = userManager;
-            _jwt = jwt.CurrentValue;
+            _jwt = jwt.Value;
         }
 
         public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request)
@@ -32,8 +32,8 @@ namespace Connect.Services
             if (existingUser is not null)
                 return Result<RegisterResponse>.Failure(UserErrors.UserAlreadyExists);
 
-            if(await _userManager.FindByEmailAsync(request.Email) is not null)
-                return Result<RegisterResponse>.Failure(UserErrors.EmailAlreadyExists);
+            if(await _userManager.FindByNameAsync(request.UserName) is not null)
+                return Result<RegisterResponse>.Failure(UserErrors.UserAlreadyExists);
             #endregion
 
             var user = new AppUser
@@ -48,11 +48,13 @@ namespace Connect.Services
 
             if (!result.Succeeded)
             {
+                var error = result.Errors.First();
+
                 return Result<RegisterResponse>.Failure(
                     new Error(
-                        Code: "RegistrationFailed",
-                        Description: "User registration failed. Please try again.",
-                        Type: ErrorType.Failure)
+                        Code: error.Code,
+                        Description: error.Description,
+                        Type: ErrorType.Validation)
                 );
             }
 
@@ -61,7 +63,22 @@ namespace Connect.Services
             var jwtSecuritytoken = await CreateJwtToken(user);
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecuritytoken);
             return Result<RegisterResponse>.Success(new RegisterResponse { 
-                IsAuthenticated = true,
+                Token = token, 
+                ExpiresOn = jwtSecuritytoken.ValidTo 
+            });
+        }
+
+        public async Task<Result<LoginResponse>> LoginAsync(LoginRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user is null || !await _userManager.CheckPasswordAsync(user, request.Password))
+                return Result<LoginResponse>.Failure(UserErrors.InvalidCredentials);
+
+            var jwtSecuritytoken = await CreateJwtToken(user);
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecuritytoken);
+
+            return Result<LoginResponse>.Success(new LoginResponse { 
                 Token = token, 
                 ExpiresOn = jwtSecuritytoken.ValidTo 
             });
@@ -71,13 +88,14 @@ namespace Connect.Services
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
-            var roleClaims = roles.Select(r => new Claim(ClaimTypes.Role, r));
+            var roleClaims = roles.Select(r => new Claim("roles", r));
 
             var claims = new[]
             {
+                new Claim("uid", user.Id),
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("UserName", user.UserName)
             }
             .Union(userClaims)
             .Union(roleClaims);
@@ -89,7 +107,7 @@ namespace Connect.Services
                 issuer: _jwt.Issuer,
                 audience: _jwt.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwt.ExpireDays),
+                expires: DateTime.UtcNow.AddDays(_jwt.ExpireDays),
                 signingCredentials: credentials
             );
 

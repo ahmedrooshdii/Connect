@@ -8,7 +8,7 @@ Content-Type: application/json
     "lastName": "Roshdi",
     "userName": "ahmedrooshdii",
     "email": "ahmedrooshdii@gmail.com",
-    "password": "Ahmed@123Engineer"
+    "password": "Ahmed@123"
 }
 
 ###
@@ -17,11 +17,21 @@ POST {{Connect_HostAddress}}/api/auth/register
 Accept: application/json
 Content-Type: application/json
 {
-    "firstName": "Mohamed",
-    "lastName": "Roshdi",
-    "userName": "mohamedrooshdii",
-    "email": "mohamedrooshdii@gmail.com",
-    "password": "Mohamed@123Engineer"
+    "firstName": "Manar",
+    "lastName": "Mohamed",
+    "userName": "manar.mohamed",
+    "email": ".manar@gmail.com",
+    "password": "Manar@123"
+}
+
+###
+
+POST {{Connect_HostAddress}}/api/auth/login
+Accept: application/json
+Content-Type: application/json
+{
+    "email": "ahmedrooshdii@gmail.com",
+    "password": "Ahmed@123Engineer"
 }
 
 ###
