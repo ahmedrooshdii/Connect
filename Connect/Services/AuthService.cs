@@ -28,8 +28,7 @@ namespace Connect.Services
         public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request)
         {
             #region Validation
-            var existingUser = await _userManager.FindByEmailAsync(request.Email);
-            if (existingUser is not null)
+            if (await _userManager.FindByEmailAsync(request.Email) is not null)
                 return Result<RegisterResponse>.Failure(UserErrors.UserAlreadyExists);
 
             if(await _userManager.FindByNameAsync(request.UserName) is not null)
