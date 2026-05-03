@@ -7,5 +7,6 @@ namespace Connect.Contracts
     {
         Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request);
         Task<Result<LoginResponse>> LoginAsync(LoginRequest request);
+        Task<Result> AddToRoleAsync(string userId, string role);
     }
 }

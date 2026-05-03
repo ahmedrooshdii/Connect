@@ -4,8 +4,11 @@ namespace Connect.Errors
 {
     public static class UserErrors
     {
-        public static Error NotFound(string userName) 
+        public static Error NotFoundByName(string userName) 
             => new("User.NotFound", $"No user found with username '{userName}'.", ErrorType.NotFound);
+
+        public static Error NotFoundById(string userId) 
+            => new("User.NotFound", $"No user found with ID '{userId}'.", ErrorType.NotFound);
 
         public static Error UserAlreadyExists
             => new("User.UserAlreadyExists", "A user with the same username already exists.", ErrorType.Conflict);

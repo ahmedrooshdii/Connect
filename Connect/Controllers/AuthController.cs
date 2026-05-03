@@ -1,5 +1,6 @@
 ﻿using Connect.Contracts;
 using Connect.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Connect.Controllers
@@ -33,6 +34,18 @@ namespace Connect.Controllers
                 return Unauthorized(result.Error);
 
             return Ok(result.Value);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("add-to-role")]
+        public async Task<IActionResult> AddToRole([FromBody] AddToRoleRequest request)
+        {
+            var result = await _authService.AddToRoleAsync(request.UserId, request.Role);
+
+            if (result.IsFailure)
+                return BadRequest(result.Error);
+
+            return Ok();
         }
     }
 }

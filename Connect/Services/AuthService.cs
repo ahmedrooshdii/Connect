@@ -17,12 +17,14 @@ namespace Connect.Services
     public class AuthService : IAuthService
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly Jwt _jwt;
 
-        public AuthService(UserManager<AppUser> userManager, IOptionsSnapshot<Jwt> jwt)
+        public AuthService(UserManager<AppUser> userManager, IOptionsSnapshot<Jwt> jwt, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _jwt = jwt.Value;
+            _roleManager = roleManager;
         }
 
         public async Task<Result<RegisterResponse>> RegisterAsync(RegisterRequest request)
@@ -81,6 +83,29 @@ namespace Connect.Services
                 Token = token, 
                 ExpiresOn = jwtSecuritytoken.ValidTo 
             });
+        }
+
+        public async Task<Result> AddToRoleAsync(string userId, string role)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return Result.Failure(UserErrors.NotFoundById(userId));
+
+            if(!await _roleManager.RoleExistsAsync(role))
+                return Result.Failure(RoleErrors.NotFoundByName(role));
+
+            var result = await _userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.First();
+                return Result.Failure(
+                    new Error(
+                        Code: error.Code,
+                        Description: error.Description,
+                        Type: ErrorType.Validation)
+                );
+            }
+            return Result.Success();
         }
 
         private async Task<JwtSecurityToken> CreateJwtToken(AppUser user)

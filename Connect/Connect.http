@@ -17,11 +17,21 @@ POST {{Connect_HostAddress}}/api/auth/register
 Accept: application/json
 Content-Type: application/json
 {
-    "firstName": "Manar",
+    "firstName": "Mona",
     "lastName": "Mohamed",
-    "userName": "manar.mohamed",
-    "email": ".manar@gmail.com",
-    "password": "Manar@123"
+    "userName": "mona.mohamed",
+    "email": "mona@gmail.com",
+    "password": "Mona@123"
+}
+
+###
+
+POST {{Connect_HostAddress}}/api/auth/login
+Accept: application/json
+Content-Type: application/json
+{
+    "email": "mona@gmail.com",
+    "password": "Mona@123"
 }
 
 ###
@@ -31,7 +41,29 @@ Accept: application/json
 Content-Type: application/json
 {
     "email": "ahmedrooshdii@gmail.com",
-    "password": "Ahmed@123Engineer"
+    "password": "Ahmed@123"
+}
+
+###
+
+POST {{Connect_HostAddress}}/api/auth/add-to-role
+Accept: application/json
+Content-Type: application/json
+authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiIxZDI5YWVjMS0zOTc3LTQyNmEtOGFiNy0yYWZkOGJmZTYzZjEiLCJzdWIiOiJtb25hLm1vaGFtZWQiLCJlbWFpbCI6Im1vbmFAZ21haWwuY29tIiwianRpIjoiZWE0MzY1NDEtZjkwOC00MjAzLTgzMTEtMzMwYzM0ZDgxNjgyIiwicm9sZXMiOlsiQWRtaW4iLCJVc2VyIl0sImV4cCI6MTc4MDM4NzUzNiwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3QiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo1MDAxIn0.0Ldh-xynwGzw47ettOFhL95839FoT9IldijRLOlOd6E
+{
+    "userId": "1d29aec1-3977-426a-8ab7-2afd8bfe63f1",
+    "role": "User"
+}
+
+###
+
+POST {{Connect_HostAddress}}/api/auth/add-to-role
+Accept: application/json
+Content-Type: application/json
+authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiJhMzliMjRiNy01MDM0LTQxYjktYmE2MC00MzhjZWYzM2UxNTkiLCJzdWIiOiJhaG1lZHJvb3NoZGlpIiwiZW1haWwiOiJhaG1lZHJvb3NoZGlpQGdtYWlsLmNvbSIsImp0aSI6ImFjZjQ0NTIzLWMxNzAtNDJkZC1hODYyLTIzM2VmNTMxYzFjZCIsInJvbGVzIjpbIkFkbWluIiwiVXNlciJdLCJleHAiOjE3ODAzODc0MTQsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NTAwMSJ9._zK2nFPCv39pBm4yo8VDv0QC3edcib7ouHUG6iCODSg
+{
+    "userId": "1d29aec1-3977-426a-8ab7-2afd8bfe63f1",
+    "role": "Admin"
 }
 
 ###
